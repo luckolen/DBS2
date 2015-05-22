@@ -35,6 +35,9 @@ BEGIN
     output := output || part_array(array_length - i + 1);
   end loop;
   output := MOD(TO_NUMBER(output), 62);
+  if length(output) = 1 then
+    output := '0' || output;
+  end if;
   RETURN output;
 END;
 /
