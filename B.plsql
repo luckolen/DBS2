@@ -11,6 +11,7 @@ AS
   temp VARCHAR2(50);
   sqlString VARCHAR2(200);
   sqlResult number(10);
+  checksum VARCHAR2(2);
 BEGIN
   temp := ISIN;
   while(instr(temp,' ') > 0)
@@ -25,6 +26,21 @@ BEGIN
   
   select count(*) into sqlResult from university, country where university.code = uni AND country.code = country ;
   if sqlResult < 1 then
+    RETURN 0;
+  end if;
+  
+  temp := ISIN;
+  temp := replace(temp, country);
+  temp := replace(temp, uni);
+  temp := replace(temp, ' ');
+  checksum := substr(temp, length(temp) - 1);
+  temp := substr(temp, 0, length(temp) - 2);
+  if tochecksum(uni || ' ' || country || ' ' || temp) != checksum then
+    RETURN 0;
+  end if;
+  
+  select snl into sqlResult from university where code = uni;
+  if sqlResult != length(temp) then
     RETURN 0;
   end if;
 
